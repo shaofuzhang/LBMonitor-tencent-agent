@@ -1,0 +1,34 @@
+import logging
+import os
+from logging.handlers import TimedRotatingFileHandler
+
+
+def singleton(cls, *args, **kw):
+    instances = {}
+
+    def _singleton():
+        if cls not in instances:
+            instances[cls] = cls(*args, **kw)
+        return instances[cls]
+
+    return _singleton
+
+
+@singleton
+class LogHelper(object):
+    logfile = os.path.join(os.getcwd() + '/', 'log/log.log')
+    if not os.path.exists(os.path.dirname(logfile)):
+        os.makedirs(os.path.dirname(logfile))
+
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    logFormatter = logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+    file_handler = TimedRotatingFileHandler(
+        logfile, 'midnight', backupCount=15)
+    file_handler.setFormatter(logFormatter)
+    logger.addHandler(file_handler)
+
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormatter)
+    logger.addHandler(consoleHandler)
