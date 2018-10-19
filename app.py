@@ -47,6 +47,8 @@ def func(*args):
             val = None
             if result and result.get("code") == 0 and result.get("dataPoints"):
                 val = result.get("dataPoints")[0]
+                logger.error('获取负载均衡监控: %s .metric信息: %s .当前值为: %s ',
+                             str(load_balancer_name), metric, str(val))
             else:
                 logger.error('获取负载均衡监控: %s .metric信息: %s .监控信息获取失败',
                              str(load_balancer_name), metric)
@@ -74,7 +76,7 @@ if __name__ == "__main__":
         pool = multiprocessing.Pool(process_count)
         signal.signal(signal.SIGINT, original_sigint_handler)
         try:
-            dt = datetime.datetime.now() + datetime.timedelta(minutes=-3)
+            dt = datetime.datetime.now() + datetime.timedelta(minutes=-4)
             cur_time = dt.strftime('%Y-%m-%d  %H:%M:00')
 
             # 查询一条取出total
